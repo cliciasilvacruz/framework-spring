@@ -1,15 +1,9 @@
 package com.aplicacao_spring.controller;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.aplicacao_spring.dto.AutorDTO;
 import com.aplicacao_spring.model.Autor;
@@ -19,17 +13,41 @@ import com.aplicacao_spring.service.AutorService;
 @RequestMapping("/api/autores")
 public class AutorController {
 
-     @Autowired
+    @Autowired
     private AutorService autorService;
 
+    // Listar todos os autores
     @GetMapping
-    public List<Autor> getAllAutores() {
-        return autorService.findAll();
+    public ResponseEntity<List<AutorDTO>> listarAutores() {
+        List<AutorDTO> autores = autorService.listarTodos();
+        return ResponseEntity.ok(autores);
     }
 
+    // Buscar autor por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<AutorDTO> buscarAutor(@PathVariable Long id) {
+        AutorDTO autor = autorService.buscarAutorPorId(id);
+        return ResponseEntity.ok(autor);
+    }
+
+    // Criar um novo autor
     @PostMapping
-    public Autor createAutor(@RequestBody AutorDTO autorDTO) {
-        return autorService.salvarAutor(autorDTO);
+    public ResponseEntity<AutorDTO> criarAutor(@RequestBody AutorDTO autorDTO) {
+        AutorDTO novoAutor = autorService.criarAutor(autorDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoAutor);
     }
 
+    // Atualizar um autor existente
+    @PutMapping("/{id}")
+    public ResponseEntity<AutorDTO> atualizarAutor(@PathVariable Long id, @RequestBody AutorDTO autorDTO) {
+        AutorDTO autorAtualizado = autorService.atualizarAutor(id, autorDTO);
+        return ResponseEntity.ok(autorAtualizado);
+    }
+
+    // Deletar um autor por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarAutor(@PathVariable Long id) {
+        autorService.deletarAutor(id);
+        return ResponseEntity.noContent().build();
+    }
 }

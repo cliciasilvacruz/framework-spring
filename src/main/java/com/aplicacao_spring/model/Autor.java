@@ -8,12 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
 @Entity(name = "autor")
 @JsonIdentityInfo(
@@ -27,13 +22,11 @@ public class Autor {
     @Column(nullable = false,unique = true,length = 100)
     private String nome;
 
-    
-    private String afiliacao;
-
     @ManyToMany(mappedBy = "autores")
-    @JsonIgnore
-    @JsonBackReference // Evita recursão infinita do lado "filho" do relacionamento
     private List<Artigo> artigos = new ArrayList<>();
+
+    @OneToOne
+    private Afiliacao afiliacao;
 
     public Autor(){}
 
@@ -53,14 +46,6 @@ public class Autor {
         this.nome = nome;
     }
 
-    public String getAfiliacao() {
-        return afiliacao;
-    }
-
-    public void setAfiliacao(String afiliacao) {
-        this.afiliacao = afiliacao;
-    }
-
     public List<Artigo> getArtigos() {
         return artigos;
     }
@@ -69,12 +54,18 @@ public class Autor {
         this.artigos = artigos;
     }
 
-    public Autor(Long id, String nome, String afiliacao, List<Artigo> artigos) {
-        this.id = id;
-        this.nome = nome;
-        this.afiliacao = afiliacao;
-        this.artigos = artigos;
+    public Afiliacao getAfiliacao() {
+        return afiliacao;
     }
 
+    public void setAfiliacao(Afiliacao afiliacao) {
+        this.afiliacao = afiliacao;
+    }
 
+    public Autor(Long id, String nome, List<Artigo> artigos, Afiliacao afiliacao) {
+        this.id = id;
+        this.nome = nome;
+        this.artigos = artigos;
+        this.afiliacao = afiliacao;
+    }
 }

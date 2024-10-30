@@ -1,8 +1,6 @@
 package com.aplicacao_spring.model;
 import java.util.ArrayList;
 import java.util.List;
-import org.antlr.v4.runtime.misc.NotNull;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -20,9 +18,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "artigo")
-@JsonIdentityInfo(
-    generator = ObjectIdGenerators.PropertyGenerator.class,
-    property = "id")
 public class Artigo {
 
     @Id
@@ -31,8 +26,7 @@ public class Artigo {
 
     @Column(nullable = false, unique = true, length = 100)
     private String titulo;
-    
-    @NonNull
+
     private Integer anoPublicacao;
 
     @ManyToMany
@@ -41,12 +35,9 @@ public class Artigo {
         joinColumns = @JoinColumn(name = "artigo_id"),
         inverseJoinColumns = @JoinColumn(name = "autor_id")
     )
-    @JsonManagedReference // Prevê recursão infinita para o lado "pai" do relacionamento
-    @JsonIgnore
     private List<Autor> autores = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "revista_id")
     private RevistaCientifica revista;
 
 
