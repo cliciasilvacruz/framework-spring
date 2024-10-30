@@ -1,9 +1,12 @@
 package com.aplicacao_spring.dto;
 
+import java.util.List;
+
 public class RevistaCientificaDTO {
     private Long id;
     private String nome;
     private String issn;
+    private List<Long> artigosIds;
     
     public Long getId() {
         return id;
@@ -22,6 +25,12 @@ public class RevistaCientificaDTO {
     }
     public void setIssn(String issn) {
         this.issn = issn;
+    }
+    public List<Long> getArtigosIds() {
+        return artigosIds;
+    }
+    public void setArtigosIds(List<Long> artigosIds) {
+        this.artigosIds = artigosIds;
     }
 
     

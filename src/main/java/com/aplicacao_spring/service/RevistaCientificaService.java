@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aplicacao_spring.dto.RevistaCientificaDTO;
 import com.aplicacao_spring.model.RevistaCientifica;
 import com.aplicacao_spring.repository.RevistaCientificaRepository;
 
@@ -13,27 +14,20 @@ import com.aplicacao_spring.repository.RevistaCientificaRepository;
 public class RevistaCientificaService {
 
     @Autowired
-    private RevistaCientificaRepository revistaCientificaRepository;
+    private RevistaCientificaRepository revistaRepository;
 
-    public RevistaCientificaService(RevistaCientificaRepository revistaCientificaRepository) {
-        this.revistaCientificaRepository = revistaCientificaRepository;
+    public RevistaCientifica salvarRevista(RevistaCientificaDTO revistaDTO) {
+        if (revistaRepository.existsByIssn(revistaDTO.getIssn())) {
+            throw new RuntimeException("ISSN já existe: " + revistaDTO.getIssn());
+        }
+        RevistaCientifica revista = new RevistaCientifica();
+        revista.setNome(revistaDTO.getNome());
+        revista.setIssn(revistaDTO.getIssn());
+        return revistaRepository.save(revista);
     }
 
     public List<RevistaCientifica> findAll() {
-        return revistaCientificaRepository.findAll();
+        return revistaRepository.findAll();
     }
-
-    public Optional<RevistaCientifica> findById(Long id) {
-        return revistaCientificaRepository.findById(id);
-    }
-
-    public RevistaCientifica save(RevistaCientifica revista) {
-        return revistaCientificaRepository.save(revista);
-    }
-
-    public void deleteById(Long id) {
-        revistaCientificaRepository.deleteById(id);
-    }
-
 
 }

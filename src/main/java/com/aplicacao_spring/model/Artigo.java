@@ -1,5 +1,13 @@
 package com.aplicacao_spring.model;
+import java.util.ArrayList;
 import java.util.List;
+import org.antlr.v4.runtime.misc.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import io.micrometer.common.lang.NonNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,30 +20,39 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name = "artigo")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class Artigo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true,length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String titulo;
-
+    
     @NonNull
     private Integer anoPublicacao;
 
     @ManyToMany
     @JoinTable(
-        name = "autor_artigo",
+        name = "artigo_autor",
         joinColumns = @JoinColumn(name = "artigo_id"),
         inverseJoinColumns = @JoinColumn(name = "autor_id")
     )
-    private List<Autor> autores;
+    @JsonManagedReference // Prevê recursão infinita para o lado "pai" do relacionamento
+    @JsonIgnore
+    private List<Autor> autores = new ArrayList<>();
 
     @ManyToOne
+    @JoinColumn(name = "revista_id")
     private RevistaCientifica revista;
 
-    public Artigo(){}
+
+    public Artigo(){
+
+    }
 
     public Long getId() {
         return id;
@@ -53,20 +70,12 @@ public class Artigo {
         this.titulo = titulo;
     }
 
-    public Integer getAnoPublicacao() {
+    public int getAnoPublicacao() {
         return anoPublicacao;
     }
 
-    public void setAnoPublicacao(Integer anoPublicacao) {
+    public void setAnoPublicacao(int anoPublicacao) {
         this.anoPublicacao = anoPublicacao;
-    }
-
-    public List<Autor> getAutores() {
-        return autores;
-    }
-
-    public void setAutores(List<Autor> autores) {
-        this.autores = autores;
     }
 
     public RevistaCientifica getRevista() {
@@ -77,12 +86,30 @@ public class Artigo {
         this.revista = revista;
     }
 
-    public Artigo(Long id, String titulo, Integer anoPublicacao, List<Autor> autores, RevistaCientifica revista) {
+    public List<Autor> getAutores() {
+        return autores;
+    }
+
+    public void setAutores(List<Autor> autores) {
+        this.autores = autores;
+    }
+
+    public Artigo(Long id, String titulo, int anoPublicacao, RevistaCientifica revista, List<Autor> autores) {
         this.id = id;
         this.titulo = titulo;
         this.anoPublicacao = anoPublicacao;
-        this.autores = autores;
         this.revista = revista;
+        this.autores = autores;
+    }
+
+    public Iterable<Long> getAutoresIds() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getAutoresIds'");
+    }
+
+    public Object getRevistaId() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getRevistaId'");
     }
 
 

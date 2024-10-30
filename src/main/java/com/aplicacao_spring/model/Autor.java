@@ -1,6 +1,12 @@
 package com.aplicacao_spring.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,6 +16,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 
 @Entity(name = "autor")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class Autor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,10 +27,13 @@ public class Autor {
     @Column(nullable = false,unique = true,length = 100)
     private String nome;
 
+    
     private String afiliacao;
 
     @ManyToMany(mappedBy = "autores")
-    private List<Artigo>  artigos;
+    @JsonIgnore
+    @JsonBackReference // Evita recursão infinita do lado "filho" do relacionamento
+    private List<Artigo> artigos = new ArrayList<>();
 
     public Autor(){}
 
